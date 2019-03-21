@@ -1,15 +1,68 @@
 package ink.nota.common.test.chars;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 
 public class TestStringSort {
 	
+	public static void main(String[] args) {
+		if (args==null || args.length==0) {
+			String [] strs = {"sdaf",
+					"acd",
+					"sdaw",
+					"abc",
+					"ab",
+					"bb",
+					"bacs",
+					"bgs",
+					"bgsa",
+					"abca",
+					"abcdefghijklmno",
+					"abcdefghijklmnoy",
+					"abcdefghijklmnopqrstuvwxyz",
+					"abcdefghijklmnopqrstuvwwyy",
+					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuvwxyz",
+					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuv",
+					"abcdefghijklmnopqrstuvwxyzabghyuiiu",
+					"abcdefghijklmnopqrstuvwxyzabghyu",
+					"abcdefghijklmnopqrstuvwxyzabghyusdfassd",
+					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstutexyz",
+					"sd"
+			};
+			args = strs;
+		}
+		
+		System.out.println("----------------------------------------------");
+		System.out.println("-------TreeMapSort");
+		System.out.println("----------------------------------------------");
+		TreeMap<Double, Object> treeMap = sortStringsByTreeMap(args);
+		treeMapSort(treeMap);
+
+//		System.out.println("----------------------------------------------");
+//		System.out.println("-------HashMapSort");
+//		System.out.println("----------------------------------------------");
+//		HashMap<Double, Object> hashMap = sortStringsByHashMap(args);
+//		hashMapSort(hashMap);
+	}
 	
+	
+	private static void treeMapSort(TreeMap<Double, Object> treeMap) {
+		treeMap.keySet().stream().forEach(e->{
+			Object object = treeMap.get(e);
+			if (object instanceof Map) {
+				treeMapSort((TreeMap<Double, Object>)object);
+			}else {
+				System.out.println(object);
+			}
+		});
+		}
+
+
 	public static Dmap getPcodeByDmap(Dmap dmap) {
 		String str = dmap.getSubStr();
 		if(str.length() >= 15) {
@@ -35,6 +88,11 @@ public class TestStringSort {
 		return getPcodeByDmap(dmap);
 	}
 
+	/**
+	 *  排序算法
+	 * @param str
+	 * @return
+	 */
 	private static double getPcodeStr(String str) {
 		if(str == null || str.length() == 0) return 0;
 		char[] charArray = str.toCharArray();
@@ -47,6 +105,10 @@ public class TestStringSort {
 		}
 		return p;
 	}
+	
+	/*
+	 * String排序标记类
+	 */
 	static class Dmap {
 		private double index;
 		private String oStr;
@@ -81,37 +143,7 @@ public class TestStringSort {
 	}
 	
 	
-	public static void main(String[] args) {
-		if (args==null || args.length==0) {
-			String [] strs = {"sdaf",
-					"acd",
-					"sdaw",
-					"abc",
-					"ab",
-					"bb",
-					"bacs",
-					"bgs",
-					"bgsa",
-					"abca",
-					"abcdefghijklmno",
-					"abcdefghijklmnoy",
-					"abcdefghijklmnopqrstuvwxyz",
-					"abcdefghijklmnopqrstuvwwyy",
-					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuvwxyz",
-					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuv",
-					"abcdefghijklmnopqrstuvwxyzabghyuiiu",
-					"abcdefghijklmnopqrstuvwxyzabghyu",
-					"abcdefghijklmnopqrstuvwxyzabghyusdfassd",
-					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstutexyz",
-					"",
-					"sd"
-			};
-			args = strs;
-		}
-		HashMap<Double, Object> hashMap = sortStrings(args);
-		mapSort(hashMap);
-		
-	}
+	
 
 	/**
 	 * sort Strings 
@@ -119,13 +151,22 @@ public class TestStringSort {
 	 * @param args
 	 * @return
 	 */
-	private static HashMap<Double, Object> sortStrings(String[] args) {
-		HashMap<Double, Object> hashMap = new HashMap<>();
+	private static HashMap<Double, Object> sortStringsByHashMap(String[] args) {
+		HashMap<Double, Object> hashMap = new HashMap<Double,Object>();
 		for (String str : args) {
 			Dmap dmap = getPcodeByString(str);
 			ifCreateMapNode(hashMap, dmap);
 		}
 		return hashMap;
+	}
+	
+	private static TreeMap<Double, Object> sortStringsByTreeMap(String[] args) {
+		TreeMap<Double, Object> treeMap = new TreeMap<Double,Object>();
+		for (String str : args) {
+			Dmap dmap = getPcodeByString(str);
+			ifCreateTreeMapNode(treeMap, dmap);
+		}
+		return treeMap;
 	}
 
 	/**
@@ -147,6 +188,21 @@ public class TestStringSort {
 			hashMap.put(dmap.getIndex(),dmap.getoStr());
 		}
 	}
+	
+	private static void ifCreateTreeMapNode(TreeMap<Double, Object> treeMap, Dmap dmap) {
+		if (!dmap.isNo()) {
+			Object treeMapz;
+			TreeMap<Double, Object> treeMapNode;
+			if((treeMapz = treeMap.get(dmap.getIndex())) == null) treeMapNode = new TreeMap<>(); 
+			else treeMapNode = (TreeMap<Double, Object>) treeMapz;
+			treeMap.put(dmap.getIndex(), treeMapNode);
+			dmap = getPcodeByDmap(dmap);
+			//递归
+			ifCreateTreeMapNode(treeMapNode,dmap);
+		}else {
+			treeMap.put(dmap.getIndex(),dmap.getoStr());
+		}
+	}
 
 
 	/**
@@ -154,7 +210,7 @@ public class TestStringSort {
 	 * 按顺序打印字符串
 	 * @param hashMap
 	 */
-	private static void mapSort(HashMap<Double, Object> hashMap) {
+	private static void hashMapSort(HashMap<Double, Object> hashMap) {
 		double[] ds = new double[hashMap.size()];
 		Set<Double> keySet2 = hashMap.keySet();
 		int p = 0;
@@ -166,10 +222,12 @@ public class TestStringSort {
 		for (double d : ds) {
 			Object object = hashMap.get(d);
 			if(object instanceof Map) {
-			 	mapSort((HashMap<Double, Object>)object);
+				hashMapSort((HashMap<Double, Object>)object);
 			}else {
 				System.out.println(hashMap.get(d));
 			}
 		}
 	}
+	
+	
 }
