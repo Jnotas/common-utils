@@ -1,13 +1,16 @@
 package ink.nota.common.test.chars;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-
+/**
+ * English String Sort
+ * @author Frank
+ *
+ */
 public class TestStringSort {
 	
 	public static void main(String[] args) {
@@ -15,22 +18,23 @@ public class TestStringSort {
 			String [] strs = {"sdaf",
 					"acd",
 					"sdaw",
-					"abc",
+					"Abc",
 					"ab",
 					"bb",
-					"bacs",
+					"BAcs",
 					"bgs",
 					"bgsa",
 					"abca",
+					null,
 					"abcdefghijklmno",
-					"abcdefghijklmnoy",
-					"abcdefghijklmnopqrstuvwxyz",
-					"abcdefghijklmnopqrstuvwwyy",
+					"abcdefghiJklmnoy",
+					"abCdefghijklmnopqrstuvwxyz",
+					"abcdefghIJKLMNOpqrstuvwwyy",
 					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuvwxyz",
-					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstuv",
-					"abcdefghijklmnopqrstuvwxyzabghyuiiu",
-					"abcdefghijklmnopqrstuvwxyzabghyu",
-					"abcdefghijklmnopqrstuvwxyzabghyusdfassd",
+					"abcDEFghijklmnopqrstuvwxyzabghijklmnopqrstuv",
+					"abcdefghijklmnopqrstuVWXYZAbghyuiiu",
+					"abcdefghijklmnopqrstuvwxYzabghyu",
+					"abcdefghijklMNopqrstuvwxyzabghyusdfassd",
 					"abcdefghijklmnopqrstuvwxyzabghijklmnopqrstutexyz",
 					"sd"
 			};
@@ -82,6 +86,7 @@ public class TestStringSort {
 	 * @return
 	 */
 	public static Dmap getPcodeByString(String str) {
+		if(str == null) return null;
 		Dmap dmap = new Dmap();
 		dmap.setoStr(str);
 		dmap.setSubStr(str);
@@ -95,6 +100,7 @@ public class TestStringSort {
 	 */
 	private static double getPcodeStr(String str) {
 		if(str == null || str.length() == 0) return 0;
+		str = str.toLowerCase();
 		char[] charArray = str.toCharArray();
 		double p = 0;
 		double deep = 1;
@@ -164,6 +170,7 @@ public class TestStringSort {
 		TreeMap<Double, Object> treeMap = new TreeMap<Double,Object>();
 		for (String str : args) {
 			Dmap dmap = getPcodeByString(str);
+			if(dmap == null) continue;
 			ifCreateTreeMapNode(treeMap, dmap);
 		}
 		return treeMap;
